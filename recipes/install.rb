@@ -66,7 +66,7 @@ redis_instances.each do |current_server|
     runit_service service_name do
       # log false
       cookbook 'redisio'
-      run_template_name 'sv-redis-run.erb'
+      run_template_name 'redis'
       options({
         :user => current_server[:user],
         :install_dir => redis[:install_dir],
