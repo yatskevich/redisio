@@ -62,7 +62,7 @@ redis_instances.each do |current_server|
       supports :start => true, :stop => true, :restart => true, :status => false
   	end
   elsif job_control == 'runit' 
-    inlcude_recipe 'runit'
+    include_recipe 'runit'
     runit_service service_name do
       # log false
       cookbook 'redisio'
