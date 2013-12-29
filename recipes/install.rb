@@ -42,8 +42,10 @@ redis_instances.each do |current_server|
   server_name = current_server['name'] || current_server['port']
   job_control = current_server['job_control'] || redis['default_settings']['job_control'] 
 
+  service_name = "redis#{server_name}"
+  
   if job_control == 'initd'
-  	service "redis#{server_name}" do
+  	service service_name do
       start_command "/etc/init.d/redis#{server_name} start"
       stop_command "/etc/init.d/redis#{server_name} stop"
       status_command "pgrep -lf 'redis.*#{server_name}' | grep -v 'sh'"
@@ -51,7 +53,7 @@ redis_instances.each do |current_server|
       supports :start => true, :stop => true, :restart => true, :status => false
   	end
   elsif job_control == 'upstart'
-  	service "redis#{server_name}" do
+  	service service_name do
 	  provider Chef::Provider::Service::Upstart
       start_command "start redis#{server_name}"
       stop_command "stop redis#{server_name}"
@@ -59,6 +61,18 @@ redis_instances.each do |current_server|
       restart_command "restart redis#{server_name}"
       supports :start => true, :stop => true, :restart => true, :status => false
   	end
+  elsif job_control == 'runit' 
+    runit_service service_name do
+      # log false
+      cookbook 'redisio'
+      run_template_name 'sv-redis-run.erb'
+      options({
+        :user => current_server[:user],
+        :install_dir => redis[:install_dir],
+        :configdir => current_server[:configdir],
+        :name => server_name
+      })
+    end
   else
     Chef::Log.error("Unknown job control type, no service resource created!")
   end
