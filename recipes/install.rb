@@ -64,7 +64,8 @@ redis_instances.each do |current_server|
   elsif job_control == 'runit' 
     include_recipe 'runit'
     runit_service service_name do
-      # log false
+      log false
+      sv_templates true
       cookbook 'redisio'
       run_template_name 'redis'
       options({
