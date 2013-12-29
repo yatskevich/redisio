@@ -65,13 +65,12 @@ redis_instances.each do |current_server|
     include_recipe 'runit'
     runit_service service_name do
       log false
-      sv_templates true
       cookbook 'redisio'
       run_template_name 'redis'
       options({
-        :user => current_server[:user],
-        :install_dir => redis[:install_dir],
-        :configdir => current_server[:configdir],
+        :user => current_server['user'],
+        :install_dir => redis['install_dir'],
+        :configdir => current_server['configdir'],
         :name => server_name
       })
     end
