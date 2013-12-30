@@ -39,6 +39,7 @@ end
 
 def unpack
   install_dir = "#{new_resource.base_name}#{new_resource.version}"
+  Chef::Log.info("Installing to #{install_dir}")
   case new_resource.artifact_type
     when "tar.gz",".tgz"
       execute %(cd #{new_resource.download_dir} ; mkdir -p '#{install_dir}' ; tar zxf '#{@tarball}' --strip-components=1 -C '#{install_dir}')
